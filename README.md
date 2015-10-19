@@ -18,7 +18,7 @@ Individual files (you can combine any number of files):
 =======
 
 ```
-python cvsmerge_simple.py Greek_Sample.csv Slovak_Sample.csv
+python mergecsv_simple.py Greek_Sample.csv Slovak_Sample.csv
 
 ```
 Batch processing:
@@ -26,7 +26,7 @@ Batch processing:
 Syntax for batch processing (all CSV files in the directory will be merged):
 
 ```
-python csvmerge_wilcard.py './*.csv'
+python mergecsv_wilcard.py './*.csv'
 ```
 
 Note that the expression needs to be in quotes (do not copy and paste the quotes, type them in Terminal)
