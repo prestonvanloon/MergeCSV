@@ -1,41 +1,50 @@
+"""
+Merge CSV
+
+Description: Merge CSV files with the same headers into one large CSV file.
+
+Usage: python mergecsv.py data1.csv data2.csv ... dataN.csv
+Outs: mergedfile.csv
+"""
+
 import sys
 import csv
-import glob
 
-class MergeUnit():
+class MergeUnit(object):
+    """  """
     values = []
     langs = []
-    
+
     def __init__(self, values, numOfLanguages):
         self.values = values
         self.langs = [""] * numOfLanguages
-    
-    def isEqual(self, values):
+
+    def is_equal(self, values):
+        """ Equaliy comparator """
         return self.values == values
 
-    def setLanguageValueAtIndex(self, value, index):
-        self.langs[index] = value 
+    def set_language_value_at_index(self, value, index):
+        """ Sets value at index """
+        self.langs[index] = value
 
-    def toCSV(self):
+    def to_csv(self):
+        """ Returns a csv row string """
         return ",".join(self.values + self.langs)
 
-fileInterator = iter(sys.argv)
-next(fileInterator) # First one is the name of the script skip it
+file_iterator = iter(sys.argv)
+next(file_iterator) # First one is the name of the script skip it
 
-lookupMap = {}
-
-headersToMatch = []
+headers_to_match = []
 languages = []
 
-def addUniqueToArray(array, value):
+def add_unique_to_array(array, value):
+    """ Adds value to array if does not exist """
     try:
         array.index(value)
     except:
         array.append(value)
-        pass
-    
 
-for singleFile in fileInterator:
+for singleFile in file_iterator:
     if singleFile.endswith('.csv'):
         print "Processing file " + singleFile + "..."
         with open(singleFile) as csvfile:
@@ -45,42 +54,41 @@ for singleFile in fileInterator:
                 if not isLanguageName:
                     if headerStripped == "KEY":
                         isLanguageName = True
-                    addUniqueToArray(headersToMatch, headerStripped)
+                    add_unique_to_array(headers_to_match, headerStripped)
                 else:
-                    addUniqueToArray(languages, headerStripped)    
+                    add_unique_to_array(languages, headerStripped)
 
-finalHeaders = headersToMatch + languages
-mergedCells = []
+final_headers = headers_to_match + languages
+merged_cells = []
 
-langIndex = 0
+lang_index = 0
 for singleFile in iter(sys.argv):
     if singleFile.endswith('.csv'):
         headers = []
         with open(singleFile) as csvfile:
             headers = csvfile.readline().strip('\n').split(',')
             reader = csv.DictReader(csvfile, headers, delimiter=",")
-            
+
             for row in reader:
                 langValue = None
                 values = []
-                for header in headersToMatch:
+                for header in headers_to_match:
                     values.append(row[header])
                 for lang in languages:
                     if row.has_key(lang):
                         langValue = row[lang]
                 hasMergedForValue = False
-                for merged in mergedCells:
-                    if merged.isEqual(values):
+                for merged in merged_cells:
+                    if merged.is_equal(values):
                         hasMergedForValue = True
-                        merged.setLanguageValueAtIndex(langValue, langIndex)    
+                        merged.set_language_value_at_index(langValue, lang_index)
                 if not hasMergedForValue:
                     merged = MergeUnit(values, len(languages))
-                    merged.setLanguageValueAtIndex(langValue, langIndex)
-                    mergedCells.append(merged)
-            langIndex = langIndex + 1 
-                        
+                    merged.set_language_value_at_index(langValue, lang_index)
+                    merged_cells.append(merged)
+            lang_index = lang_index + 1
 
 with open("mergedfile.csv", "wb") as resultFile:
-    resultFile.write(",".join(finalHeaders)+ "\n")
-    for merged in mergedCells:
-        resultFile.write(merged.toCSV() + "\n")
+    resultFile.write(",".join(final_headers)+ "\n")
+    for merged in merged_cells:
+        resultFile.write(merged.to_csv() + "\n")
