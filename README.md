@@ -5,7 +5,8 @@ Python script to merge CSV files.
 
 Requirements:
 
-1) Each CSV file must contain the same ordered column headers
+1) Each CSV file must contain the same ordered column headers.
+
 2) The first row must be the column header on each CSV file.
 
 
